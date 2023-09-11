@@ -2,14 +2,14 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/BorisPlus/regexphandlers)](https://goreportcard.com/report/github.com/BorisPlus/regexphandlers)
 
-Мне не хватало возможности в URI-path пакета `net\http` возможности использования регулярных выражений, походобных REST Api:
+Мне не хватало задейсвования в URI-path пакета `net\http` возможности их парсинга посредством регулярных выражений, походобно REST Api:
 
-* "http://domain.com/api/item/{numeric}";
-* "http://domain.com/api/item/{numeric}/update";
-* "http://domain.com/api/item/{numeric}/delete";
-* "http://domain.com/api/notify/{email}".
+* http://domain.com/api/item/{numeric};
+* http://domain.com/api/item/{numeric}/update;
+* http://domain.com/api/item/{numeric}/delete;
+* http://domain.com/api/notify/{email}.
 
-И если там соответственно, например, не `{numeric}` или `{email}`, то даже не идти по тому пути, передавая вызов дальше.
+И если там в URI-path, например, не `{numeric}` или `{email}`, то даже не идти по этому пути, передавая вызов дальше по списку.
   
 ## Если коротко
 
