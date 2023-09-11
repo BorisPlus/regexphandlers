@@ -1,5 +1,7 @@
 # Regex Handlers
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/BorisPlus/regexphandlers)](https://goreportcard.com/report/github.com/BorisPlus/regexphandlers)
+
 Мне не хватало возможности в URI-path пакета `net\http` возможности использования регулярных выражений, походобных REST Api:
 
 * "http://domain.com/api/item/{numeric}";
