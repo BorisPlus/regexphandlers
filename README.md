@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/BorisPlus/regexphandlers)](https://goreportcard.com/report/github.com/BorisPlus/regexphandlers)
 
-Мне не хватало задейсвования в URI-path пакета `net\http` возможности их парсинга посредством регулярных выражений, походобно REST Api:
+Мне не хватало задейсвования в URI-path пакета `net\http` возможности их парсинга посредством регулярных выражений, подобно REST Api:
 
 * http://domain.com/api/item/{numeric};
 * http://domain.com/api/item/{numeric}/update;
