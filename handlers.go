@@ -30,7 +30,7 @@ func (qpp *QueryPathPattern) normalize() string {
 	qpp.pattern = strings.ReplaceAll(qpp.pattern, `{numeric}`, `(\d*)`)
 	qpp.pattern = strings.ReplaceAll(qpp.pattern, `{string}`, `([\p{L}|\p{N}|\.|_|\-| ]*)`)
 	qpp.pattern = strings.ReplaceAll(qpp.pattern, `{filename}`, `([\p{L}|\p{N}|\.|_|\-| ]*)`)
-	qpp.pattern = strings.ReplaceAll(qpp.pattern, `{any}`, `([^/]*)`)
+	qpp.pattern = strings.ReplaceAll(qpp.pattern, `{any}`, `(.*)`)
 	return qpp.pattern
 }
 

@@ -2,11 +2,12 @@ package regexhandlers_test
 
 import (
 	"context"
-	// "errors"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
+	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -71,10 +72,10 @@ func TestByteResponse(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err := httpServer.Start()
-		if err != nil {
-			fmt.Printf("TestByteResponse Start err %s\n", err)
-		}
+		_ = httpServer.Start()
+		// if err != nil {
+		// 	fmt.Printf("Start err %s\n", err)
+		// }
 	}()
 	time.Sleep(1 * time.Second)
 	client := &http.Client{}
@@ -103,10 +104,7 @@ func TestByteResponse(t *testing.T) {
 		t.Errorf("FAIL: error decode event http request: %s\n", err)
 		return
 	}
-	err = httpServer.Stop(context.Background())
-	if err != nil {
-		fmt.Printf("TestByteResponse Stop err %s\n", err)
-	}
+	_ = httpServer.Stop(context.Background())
 	wg.Wait()
 }
 
@@ -125,10 +123,10 @@ func TestJsonResponse(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err := httpServer.Start()
-		if err != nil {
-			fmt.Printf("TestJsonResponse Start err %s\n", err)
-		}
+		_ = httpServer.Start()
+		// if err != nil {
+		// 	fmt.Printf("TestJsonResponse Start err %s\n", err)
+		// }
 	}()
 	time.Sleep(1 * time.Second)
 	client := &http.Client{}
@@ -155,15 +153,90 @@ func TestJsonResponse(t *testing.T) {
 		return
 	}
 	ethalon := fmt.Sprintf(`{"child_name":"%s","parent_id":"%d"}`, child_name, parent_id)
-	if string(body) != ethalon {
+	var jGet, jEthalon interface{}
+	err = json.Unmarshal([]byte(ethalon), &jEthalon)
+	if err != nil {
+		t.Errorf("FAIL: Unmarshal ethalon %s\n", err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &jGet)
+	if err != nil {
+		t.Errorf("FAIL: Unmarshal body %s\n", err.Error())
+		return
+	}
+	if !reflect.DeepEqual(jGet, jEthalon) {
 		t.Errorf("FAIL: get %s\n", body)
 		t.Errorf("FAIL: expected %s\n", ethalon)
 	} else {
 		fmt.Printf("OK: %s\n", body)
 	}
-	err = httpServer.Stop(context.Background())
+	_ = httpServer.Stop(context.Background())
+	wg.Wait()
+}
+
+func TestAnyTextResponse(t *testing.T) {
+	var host string = "localhost"
+	var port uint16 = 8002
+	var response *http.Response
+	var err error
+	id := 1024
+	title := "external"
+	anyText := "otus.ru/learning/188882/picture.jpg" // without protocol "http://", "?", "#"
+	httpServer := NewHTTPServer(
+		host,
+		port,
+	)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		_ = httpServer.Start()
+		// if err != nil {
+		// 	fmt.Printf("TestAnyTextResponse Start err %s\n", err)
+		// }
+	}()
+	time.Sleep(1 * time.Second)
+	client := &http.Client{}
+	requestNested := fmt.Sprintf("http://%s:%d/api/get/%d/%s/%s", host, port, id, title, anyText)
+	request, err := http.NewRequestWithContext(
+		context.Background(),
+		http.MethodGet,
+		requestNested,
+		strings.NewReader(``))
 	if err != nil {
-		fmt.Printf("TestJsonResponse Stop err %s\n", err)
+		t.Errorf("FAIL: error prepare http request: %s\n", requestNested)
+		return
 	}
+	request.Header.Set("Content-Type", "application/json")
+	response, err = client.Do(request)
+	if err != nil {
+		t.Errorf("FAIL: error decode event http request: %s\n", err)
+		return
+	}
+	defer response.Body.Close()
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("FAIL: error making http request: %s\n", err)
+		return
+	}
+	ethalon := fmt.Sprintf(`{"id":"%d","text":"%s","title":"%s"}`, id, anyText, title)
+	var jGet, jEthalon interface{}
+	err = json.Unmarshal([]byte(ethalon), &jEthalon)
+	if err != nil {
+		t.Errorf("FAIL: Unmarshal ethalon %s\n", err.Error())
+		return
+	}
+	err = json.Unmarshal(body, &jGet)
+	if err != nil {
+		t.Errorf("FAIL: Unmarshal get %s\n", err.Error())
+		return
+	}
+	if !reflect.DeepEqual(jGet, jEthalon) {
+		t.Errorf("FAIL: get %s\n", body)
+		t.Errorf("FAIL: expected %s\n", ethalon)
+	} else {
+		fmt.Printf("OK: %s\n", body)
+	}
+	_ = httpServer.Stop(context.Background())
 	wg.Wait()
 }

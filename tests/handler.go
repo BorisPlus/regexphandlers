@@ -40,3 +40,22 @@ func (h GetHandler) ServeHTTP(response http.ResponseWriter, request *http.Reques
 		panic(fmt.Sprintf("GetHandler err %s\n", err))
 	}
 }
+
+type GetMessage struct{}
+
+func (h GetMessage) ServeHTTP(response http.ResponseWriter, request *http.Request) {
+	responsed := make(map[string]string)
+	responsed["id"] = request.Form.Get("id")
+	responsed["title"] = request.Form.Get("title")
+	responsed["text"] = request.Form.Get("text")
+	jsonResponsed, err := json.Marshal(responsed)
+	if err != nil {
+		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+	}
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	_, err = response.Write(jsonResponsed)
+	if err != nil {
+		panic(fmt.Sprintf("GetMessage err %s\n", err))
+	}
+}

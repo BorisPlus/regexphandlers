@@ -5,8 +5,9 @@ import (
 )
 
 var (
-	none = regexphandlers.Params{}
-	ids  = regexphandlers.Params{"parent_id", "child_name"}
+	none    = regexphandlers.Params{}
+	ids     = regexphandlers.Params{"parent_id", "child_name"}
+	message = regexphandlers.Params{"id", "title", "text"}
 )
 
 func Handlers() regexphandlers.RegexpHandlers {
@@ -21,6 +22,11 @@ func Handlers() regexphandlers.RegexpHandlers {
 			`/api/get/{numeric}/{string}`, // "parent_id", "child_name"
 			ids,
 			GetHandler{},
+		),
+		*regexphandlers.NewRegexpHandler(
+			`/api/get/{numeric}/{string}/{any}`, // "parent_id", "child_name"
+			message,
+			GetMessage{},
 		),
 	)
 }
