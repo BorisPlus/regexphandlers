@@ -9,11 +9,13 @@
 * http://domain.com/api/item/{numeric}/delete;
 * http://domain.com/api/notify/{email}.
 
-И если там в URI-path, например, не `{numeric}` или `{email}`, то даже не идти по этому пути, передавая вызов дальше по списку.
-  
+И если там в URI-path, например, не `{numeric}` или `{email}` шаблоны, то даже не идти по этому пути, передавая вызов дальше по списку априори невалидных данных.
+
+> __Замечание__: В итоговом проекте задейстовал шаблон `http://domain.com/{numeric}/{numeric}/{any}`.
+
 ## Если коротко
 
-Итак, допустим уже [имееются](tests/handler.go) стандартные `net\http`-хендлеры:
+Итак, допустим уже [имееются](tests/handler.go) __штатные__ `net\http`-хендлеры:
 
 * DefaultHandler
 * VersionHandler
@@ -32,7 +34,7 @@ func Handlers() regexphandlers.RegexpHandlers {
         ),
         *regexphandlers.NewRegexpHandler(
             `/api/get/{numeric}/{string}`, // "parent_id", "child_name"
-            ids,
+            ids, // { parent_id, child_name }
             GetHandler{},
         ),
     )
@@ -48,7 +50,7 @@ var (
 )
 ```
 
-и всё, теперь их можно **спокойно** использовать в штатном `ServeMux` пакета `net\http`:
+и всё, теперь их можно использовать опять же в __штатном__ `ServeMux` пакета `net\http`:
 
 ```go
 mux := http.NewServeMux()
@@ -69,4 +71,4 @@ ok      github.com/BorisPlus/regexphandlers/tests       2.097s  coverage: 76.5% 
 
 ## Минус балл за "код"
 
-Да, `Handlers` выглядит громоздкой. Но я уверен, что со временем можно будет подмешать немного синтаксического сахара для упразднения длинного объявления `*regexphandlers.NewRegexpHandler` в конструируемом "перекрестке" регулярных путей `RegexpHandlers`.
+Да, необходимая к конструированию сторонним разработчиком (пользователем моего пакета) функция `func Handlers() regexphandlers.RegexpHandlers` выглядит громоздкой. Но я уверен, что со временем можно будет подмешать немного синтаксического сахара для упразднения длинного объявления "перекрестка" `*regexphandlers.NewRegexpHandler` из шаблонизированных регулярными выражениями путей `NewRegexpHandler`.
