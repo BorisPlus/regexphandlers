@@ -4,10 +4,10 @@
 
 Мне не хватало задейсвования в URI-path пакета `net\http` возможности их парсинга посредством регулярных выражений, подобно REST Api:
 
-* http://domain.com/api/item/{numeric};
-* http://domain.com/api/item/{numeric}/update;
-* http://domain.com/api/item/{numeric}/delete;
-* http://domain.com/api/notify/{email}.
+* `http://domain.com/api/item/{numeric}`;
+* `http://domain.com/api/item/{numeric}/update`;
+* `http://domain.com/api/item/{numeric}/delete`;
+* `http://domain.com/api/notify/{email}`.
 
 И если там в URI-path, например, не `{numeric}` или `{email}` шаблоны, то даже не идти по этому пути, передавая вызов дальше по списку априори невалидных данных.
 
